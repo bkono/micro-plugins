@@ -2,6 +2,7 @@ package cloudmap
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/micro/go-micro/registry"
@@ -14,7 +15,7 @@ type pollIntervalKey struct{}
 func getNamespaceID(ctx context.Context) string {
 	n, ok := ctx.Value(namespaceIDKey{}).(string)
 	if !ok {
-		return ""
+		return os.Getenv("MICRO_CLOUDMAP_NAMESPACEID")
 	}
 	return n
 }
@@ -33,7 +34,7 @@ func NamespaceID(n string) registry.Option {
 func getDomain(ctx context.Context) string {
 	n, ok := ctx.Value(domainKey{}).(string)
 	if !ok {
-		return ""
+		return os.Getenv("MICRO_CLOUDMAP_DOMAIN")
 	}
 	return n
 }
