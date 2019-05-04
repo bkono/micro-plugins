@@ -4,7 +4,7 @@ A registry plugin for [go-micro](https://github.com/micro/go-micro) to complimen
 
 ## Usage
 
-The plugin requires either a NamespaceID or Domain option to select an AWS CloudMap namespace.*
+The plugin registers itself as `cloudmap`. It can be enabled via `--registry` flags, `MICRO_REGISTRY` env var, or in code. Cloudmap registry does require either a NamespaceID or Domain option to select an AWS CloudMap namespace.* Either set directly in code, or use the `MICRO_CLOUDMAP_NAMESPACEID` and `MICRO_CLOUDMAP_DOMAIN` env vars.
 
 ```golang
 	// New Service

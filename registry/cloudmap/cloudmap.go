@@ -50,14 +50,16 @@ func configure(r *cregistry, opts ...registry.Option) error {
 		o(&r.opts)
 	}
 
-	if r.opts.Context != nil {
-		r.NamespaceID = getNamespaceID(r.opts.Context)
-		r.Domain = getDomain(r.opts.Context)
-	}
+	r.NamespaceID = getNamespaceID(r.opts.Context)
+	r.Domain = getDomain(r.opts.Context)
 
-	if len(r.NamespaceID) == 0 {
+	if len(r.NamespaceID) == 0 || len(r.Domain) == 0 {
 		// TODO handle namespace name provided instead of ID
-		return ErrNamespaceNotFound
+		// this is a panic instead of the original err return, because the
+		// micro binary ignores errors in Init :(
+
+		panic("cloudmap-registry: can't be used without valid namespace options")
+		// return ErrNamespaceNotFound
 	}
 
 	if r.Client == nil {
@@ -234,7 +236,7 @@ func (r *cregistry) ListServices() ([]*registry.Service, error) {
 	err := r.Client.ListServicesPages(&sd.ListServicesInput{},
 		func(page *sd.ListServicesOutput, lastPage bool) bool {
 			for _, svc := range page.Services {
-				services = append(services, &registry.Service{Name: *svc.Name})
+				services = append(services, &registry.Service{Name: aws.StringValue(svc.Name)})
 			}
 			return true
 		})

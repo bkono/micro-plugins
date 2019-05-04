@@ -2,6 +2,7 @@ package cloudmap
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/micro/go-micro/registry"
@@ -12,11 +13,14 @@ type domainKey struct{}
 type pollIntervalKey struct{}
 
 func getNamespaceID(ctx context.Context) string {
-	n, ok := ctx.Value(namespaceIDKey{}).(string)
-	if !ok {
-		return ""
+	id := os.Getenv("MICRO_CLOUDMAP_NAMESPACEID")
+	if ctx != nil {
+		v, ok := ctx.Value(namespaceIDKey{}).(string)
+		if ok {
+			id = v
+		}
 	}
-	return n
+	return id
 }
 
 // NamespaceID is used to set the AWS CloudMap namespace by ID
@@ -31,11 +35,15 @@ func NamespaceID(n string) registry.Option {
 }
 
 func getDomain(ctx context.Context) string {
-	n, ok := ctx.Value(domainKey{}).(string)
-	if !ok {
-		return ""
+	d := os.Getenv("MICRO_CLOUDMAP_DOMAIN")
+	if ctx != nil {
+		v, ok := ctx.Value(domainKey{}).(string)
+		if ok {
+			d = v
+		}
 	}
-	return n
+
+	return d
 }
 
 // Domain is used to select an AWS CloudMap namespace by domain name when the ID is unknown
