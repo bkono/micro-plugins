@@ -61,9 +61,13 @@ const minimumPoll = 30 * time.Second
 const defaultPoll = 1 * time.Minute
 
 func getPollInterval(ctx context.Context) time.Duration {
-	d, ok := ctx.Value(pollIntervalKey{}).(time.Duration)
-	if !ok {
-		return defaultPoll
+	d := defaultPoll
+	if ctx != nil {
+		v, ok := ctx.Value(pollIntervalKey{}).(time.Duration)
+		if ok {
+			d = v
+		}
+
 	}
 
 	if d < minimumPoll {
